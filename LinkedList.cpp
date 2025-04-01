@@ -164,7 +164,6 @@ public:
     /**
      * @brief Makes a deep copy of another linked list
      * @param otherList The list to copy from
-     *
      * Steps:
      * 1. Clears current list if not empty
      * 2. Handles case when source list is empty
@@ -249,9 +248,72 @@ public:
         }
         size++;
     }
+    bool search(const T& searchItem) const {
+        Node<T>* current = head;  // Start at head
 
+        while (current != nullptr) {
+            if (current->data == searchItem) {
+                return true;  // Found match
+            }
+            current = current->next;  // Move to next node
+        }
+
+        return false;  // Reached end without finding
+    }
+    bool deleteNode(const T& deleteItem) {
+        // Case 1: Empty list
+        if (isEmpty()) {
+            std::cout << "Cannot delete from empty list." << std::endl;
+            return false;
+        }
+
+        Node<T>* current = head;
+        Node<T>* previous = nullptr;
+        bool found = false;
+
+        // Search for the node to delete
+        while (current != nullptr && !found) {
+            if (current->data == deleteItem) {
+                found = true;
+            } else {
+                previous = current;
+                current = current->next;
+            }
+        }
+
+        // Case 5: Item not found
+        if (!found) {
+            cout << "Item " << deleteItem << " not found in list." << endl;
+            return false;
+        }
+
+        // Case 2: Deleting first node
+        if (previous == nullptr) {
+            head = head->next;
+            // If list had only one node
+            if (head == nullptr) {
+                tail = nullptr;
+            }
+        }
+        // Case 3 & 4: Deleting middle or last node
+        else {
+            previous->next = current->next;
+            // Case 4: Deleting last node
+            if (current == tail) {
+                tail = previous;
+            }
+        }
+
+        // Common cleanup for all deletion cases
+        cout << "Deleted node with value: " << current->data << std::endl;
+        delete current;
+        size--;
+
+        return true;
+    }
     ~LinkedList() {
         destroyList();  // Reuse the cleanup logic
     }
 };
+
 
