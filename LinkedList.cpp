@@ -100,7 +100,19 @@ class LinkedList {
 
 public:
     LinkedList(){
-        ~LinkedList(); //Destroy all previous nodes and reset all data items
+        destroyList(); //Destroy all previous nodes and reset all data items
+    }
+
+    //  Destroys all nodes in the list
+    void destroyList() {
+        Node<T>* current = head;
+        while (current != nullptr) {
+            Node<T>* next = current->next;
+            delete current;
+            current = next;
+        }
+        head = tail = nullptr;
+        size = 0;
     }
     bool isEmpty() const {
         return head == nullptr;
@@ -163,7 +175,7 @@ public:
     void copyList(const LinkedList<T>& otherList) {
         // 1. Clear current list if not empty
         if (!isEmpty()) {
-            ~LinkedList();
+            destroyList();
         }
 
         // 2. Handle empty source list case
@@ -190,6 +202,14 @@ public:
 
         // 5. Set tail pointer
         tail = currentThis;
+    }
+    /**
+    * @brief Copy constructor - creates a new list as a copy of another
+    * @param other The list to copy from
+    * Uses copyList() to avoid code duplication
+    */
+    LinkedList(const LinkedList<T>& other) : head(nullptr), tail(nullptr), size(0) {
+        copyList(other);
     }
 
     // Insert node at end of the linked list
@@ -223,23 +243,8 @@ public:
         size++;
     }
 
-    // Destructor - cleans up all nodes
     ~LinkedList() {
-        //[Node A] -> [Node B] -> [Node C] -> nullptr
-        Node<T>* current = head;
-        while (current != nullptr) {
-            // STEP 1: Save the address of next node FIRST
-            Node<T>* nextNode = current->next;  // Save location of Node B
-
-            // STEP 2: Now safe to delete current node
-            delete current;  // Delete Node A
-
-            // STEP 3: Move to the saved next node
-            current = nextNode;  // Now current points to Node B
-        }
-        head = nullptr;  // Reset head pointer
-        tail = nullptr;  // Reset tail pointer
-        size = 0;        // Reset size
+        destroyList();  // Reuse the cleanup logic
     }
 };
 
