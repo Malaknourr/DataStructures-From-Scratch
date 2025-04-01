@@ -185,19 +185,19 @@ public:
             return;
         }
 
-        // 3. Copy first node (special case for setting head)
-        Node<T>* currentOther = otherList.head;
-        head = new Node<T>(currentOther->data);
-        Node<T>* currentThis = head;
-        size = otherList.size;
-        currentOther = currentOther->next;
+        // 3. Head requires special handling (must be set once)
+        Node<T>* currentOther = otherList.head; //currentOther tracks source position (starts at source head)
+        head = new Node<T>(currentOther->data);//Establishes the new list's head node
+        Node<T>* currentThis = head; //currentThis tracks destination position
+        size = otherList.size; //Copies the total size once (more efficient than incrementing)
+        currentOther = currentOther->next; //Advances source pointer to next node
 
         // 4. Copy remaining nodes
         while (currentOther != nullptr) {
-            Node<T>* newNode = new Node<T>(currentOther->data);
-            currentThis->next = newNode;
-            currentThis = newNode;
-            currentOther = currentOther->next;
+            Node<T>* newNode = new Node<T>(currentOther->data); // Deep copy of data
+            currentThis->next = newNode; //(links new node)
+            currentThis = newNode; //advances destination pointer
+            currentOther = currentOther->next; //moves to next source node
         }
 
         // 5. Set tail pointer
@@ -210,6 +210,13 @@ public:
     */
     LinkedList(const LinkedList<T>& other) : head(nullptr), tail(nullptr), size(0) {
         copyList(other);
+    }
+    LinkedList& operator=(const LinkedList& other) {
+        if (this != &other) {
+            destroyList();  // Clear current contents
+            copyList(other);  // Copy new contents
+        }
+        return *this;
     }
 
     // Insert node at end of the linked list
